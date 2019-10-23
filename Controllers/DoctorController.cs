@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using zorgapp.Models;
+using  Npgsql;
+
 
 namespace zorgapp.Controllers{
 
@@ -48,7 +50,6 @@ namespace zorgapp.Controllers{
                     };
                     _context.Doctors.Add(doctor);
                     _context.SaveChanges();
-
                     TempData.Add("MyTempData", doctor.FirstName);
 
                     return RedirectToAction("SubmitDoctorAccount", "Doctor");
@@ -59,38 +60,52 @@ namespace zorgapp.Controllers{
         }
 
 		public IActionResult UpdateAccount(string firstname, string lastname, string email, int phonenumber, string specialism, string username, string password) {
+         NpgsqlConnection conn = new NpgsqlConnection("Server=localhost;User ID=postgres;" + 
+                                "Password=SAAD;Database=zorg;");
+            conn.Open();
 
-			if (username != null && password != null)
-			{
-				var USERNAME = _context.Doctors.FirstOrDefault(u => u.UserName == username);
-				var EMAIL = _context.Doctors.FirstOrDefault(u => u.Email == email);
-				if (USERNAME != null)
-				{
-					ViewBag.username = "Username is already used";
-				}
-				else if (EMAIL != null)
-				{
-					ViewBag.email = "Email is already in use";
-				}
-				else
-				{
-					Doctor doctor = new Doctor()
-					{
-						FirstName = firstname,
-						LastName = lastname,
-						Email = email,
-						PhoneNumber = phonenumber,
-						Specialism = specialism,
-						UserName = username,
-						Password = password
-					};
-					_context.Doctors.Update(doctor);
+            NpgsqlCommand cmd = new NpgsqlCommand("update info set \"FirstName\" = :firstname,  \"LastName\" = :lastname, where \"Email\" = '" + email + "' ;", conn);
+
+            cmd.Parameters.Add(new NpgsqlParameter("FirstName", NpgsqlTypes.NpgsqlDbType.Text));
+            cmd.Parameters.Add(new NpgsqlParameter("LastName", NpgsqlTypes.NpgsqlDbType.Text));
+            cmd.ExecuteNonQuery();
+            conn.Close();
+            		// _context.Doctors.Update(doctor);
 					_context.SaveChanges();
 					return RedirectToAction("UpdateDoctorAccount", "Doctor");
-					TempData.Add("MyTempData", doctor.FirstName);
-				}
-			}
-			return View();}
+                    return View();
+            }
+			// if (username != null && password != null)
+			// {
+			// 	var USERNAME = _context.Doctors.FirstOrDefault(u => u.UserName == username);
+			// 	var EMAIL = _context.Doctors.FirstOrDefault(u => u.Email == email);
+			// 	if (USERNAME != null)
+			// 	{
+			// 		ViewBag.username = "Username is already used";
+			// 	}
+			// 	else if (EMAIL != null)
+			// 	{
+			// 		ViewBag.email = "Email is already in use";
+			// 	}
+			// 	else
+			// 	{
+			// 		Doctor doctor = new Doctor()
+			// 		{
+			// 			FirstName = firstname,
+			// 			LastName = lastname,
+			// 			Email = email,
+			// 			PhoneNumber = phonenumber,
+			// 			Specialism = specialism,
+			// 			UserName = username,
+			// 			Password = password
+			// 		};
+			// 		_context.Doctors.Update(doctor);
+			// 		_context.SaveChanges();
+			// 		return RedirectToAction("UpdateDoctorAccount", "Doctor");
+			// 		TempData.Add("MyTempData", doctor.FirstName);
+			// 	}
+		
+			// return View();}
 
 	
 		public IActionResult SubmitDoctorAccount()
