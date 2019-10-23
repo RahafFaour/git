@@ -15,6 +15,7 @@ using  Npgsql;
 namespace zorgapp.Controllers{
 
     public class DoctorController : Controller{
+        public int DoctorId;
         private readonly DatabaseContext _context;
 
         public DoctorController(DatabaseContext context)
@@ -60,23 +61,29 @@ namespace zorgapp.Controllers{
         }
 
 		public IActionResult UpdateAccount(string firstname, string lastname, string email, int phonenumber, string specialism, string username, string password) {
-         NpgsqlConnection conn = new NpgsqlConnection("Server=localhost;User ID=postgres;" + 
-                                "Password=SAAD;Database=zorg;");
+           NpgsqlConnection conn = new NpgsqlConnection("Server=localhost;User ID=postgres;" + 
+            "Password=SAAD;Database=zorg;");
             conn.Open();
+            NpgsqlCommand cmd = new NpgsqlCommand("update info set \"UserName\" = :username, where \"DoctorId\" = id'" + "' ;", conn);
 
-            NpgsqlCommand cmd = new NpgsqlCommand("update info set \"FirstName\" = :firstname,  \"LastName\" = :lastname, where \"Email\" = '" + email + "' ;", conn);
+            // NpgsqlCommand cmd = new NpgsqlCommand("update info set \"UserName\" = :username,  \"Password\" = :password,  \"Email\" = :email, where \"DoctorId\" = id'" + "' ;", conn);
 
-            cmd.Parameters.Add(new NpgsqlParameter("FirstName", NpgsqlTypes.NpgsqlDbType.Text));
-            cmd.Parameters.Add(new NpgsqlParameter("LastName", NpgsqlTypes.NpgsqlDbType.Text));
+            cmd.Parameters.Add(new NpgsqlParameter("UserName", NpgsqlTypes.NpgsqlDbType.Text));
+            // cmd.Parameters.Add(new NpgsqlParameter("Password", NpgsqlTypes.NpgsqlDbType.Text));
+            // cmd.Parameters.Add(new NpgsqlParameter("Email", NpgsqlTypes.NpgsqlDbType.Text));
+             cmd.Parameters[0].Value = username;
+            // cmd.Parameters[1].Value = password;
+            // cmd.Parameters[2].Value = email;
             cmd.ExecuteNonQuery();
             conn.Close();
-            		// _context.Doctors.Update(doctor);
-					_context.SaveChanges();
-					return RedirectToAction("UpdateDoctorAccount", "Doctor");
+            		// // _context.Doctors.Update(doctor);
+					// _context.SaveChanges();
+					// return RedirectToAction("UpdateDoctorAccount", "Doctor");
                     return View();
+       
             }
 			// if (username != null && password != null)
-			// {
+			// {ik
 			// 	var USERNAME = _context.Doctors.FirstOrDefault(u => u.UserName == username);
 			// 	var EMAIL = _context.Doctors.FirstOrDefault(u => u.Email == email);
 			// 	if (USERNAME != null)
@@ -143,10 +150,12 @@ namespace zorgapp.Controllers{
             //string Password = password;
             //var UserL = from u in _context.Patients where u.UserName == Username select u;
             Doctor user = _context.Doctors.FirstOrDefault(u => u.UserName == username);
+            
             if (user != null)
             {
                 if (user.Password == password)
                 {
+                    DoctorId = user.DoctorId;
                     //Creates a new Identity of the user
                     var claims = new List<Claim>
                     {
