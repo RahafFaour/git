@@ -64,7 +64,7 @@ namespace zorgapp.Controllers{
            NpgsqlConnection conn = new NpgsqlConnection("Server=localhost;User ID=postgres;" + 
             "Password=SAAD;Database=zorg;");
             conn.Open();
-            NpgsqlCommand cmd = new NpgsqlCommand("update info set \"UserName\" = :username, where \"DoctorId\" = id'" + "' ;", conn);
+            NpgsqlCommand cmd = new NpgsqlCommand("update Doctors set \"UserName\" = :username, where \"DoctorId\" = '" + DoctorId + " ' ;", conn);
 
             // NpgsqlCommand cmd = new NpgsqlCommand("update info set \"UserName\" = :username,  \"Password\" = :password,  \"Email\" = :email, where \"DoctorId\" = id'" + "' ;", conn);
 
