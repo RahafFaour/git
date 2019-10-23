@@ -13,16 +13,5 @@ namespace zorgapp.Models
 
         public DbSet<Doctor> Doctors { get; set; }
 
-		private DbSet<DoInfo> doInfo;
-
-		public DbSet<DoInfo> GetDoInfo()
-		{
-			return doInfo;
-		}
-
-		public void SetDoInfo(DbSet<DoInfo> value)
-		{
-			doInfo = value;
-		}
-	}
+    }
 }

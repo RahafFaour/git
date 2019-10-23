@@ -8,18 +8,7 @@ namespace zorgapp.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-			migrationBuilder.CreateTable(
-				name: "DoInfo",
-				columns: table => new
-				{
-					DoName = table.Column<string>(nullable: true),
-					DoSpeci = table.Column<int>(nullable: true),
-					DoEmail = table.Column<string>(nullable: true),
-					DoAge = table.Column<int>(nullable: true)
-				});
-
-
-			migrationBuilder.CreateTable(
+            migrationBuilder.CreateTable(
                 name: "Doctors",
                 columns: table => new
                 {
@@ -63,10 +52,9 @@ namespace zorgapp.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Doctors");
-			migrationBuilder.DropTable(
+
+            migrationBuilder.DropTable(
                 name: "Patients");
-			migrationBuilder.DropTable(
-			   name: "DoInfo");
-		}
+        }
     }
 }

@@ -57,43 +57,8 @@ namespace zorgapp.Controllers{
             
             return View();
         }
-
-		public IActionResult UpdateAccount(string firstname, string lastname, string email, int phonenumber, string specialism, string username, string password) {
-
-			if (username != null && password != null)
-			{
-				var USERNAME = _context.Doctors.FirstOrDefault(u => u.UserName == username);
-				var EMAIL = _context.Doctors.FirstOrDefault(u => u.Email == email);
-				if (USERNAME != null)
-				{
-					ViewBag.username = "Username is already used";
-				}
-				else if (EMAIL != null)
-				{
-					ViewBag.email = "Email is already in use";
-				}
-				else
-				{
-					Doctor doctor = new Doctor()
-					{
-						FirstName = firstname,
-						LastName = lastname,
-						Email = email,
-						PhoneNumber = phonenumber,
-						Specialism = specialism,
-						UserName = username,
-						Password = password
-					};
-					_context.Doctors.Update(doctor);
-					_context.SaveChanges();
-					return RedirectToAction("UpdateDoctorAccount", "Doctor");
-					TempData.Add("MyTempData", doctor.FirstName);
-				}
-			}
-			return View();}
-
-	
-		public IActionResult SubmitDoctorAccount()
+       
+        public IActionResult SubmitDoctorAccount()
         {
             string firstname = TempData["MyTempData"].ToString();
             ViewData["FirstName"] = firstname;
@@ -102,18 +67,10 @@ namespace zorgapp.Controllers{
             return View();
 
         }
-		public IActionResult UpdateDoctorAccount()
-		{
-			string firstname = TempData["MyTempData"].ToString();
-			ViewData["FirstName"] = firstname;
-			//ViewData["LastName"] = lastname;
 
-			return View();
-
-		}
-		//Doctorlist Page
-		//Authorizes the page so only users with the role Doctor can view it
-		[Authorize(Roles = "Doctor")]
+        //Doctorlist Page
+        //Authorizes the page so only users with the role Doctor can view it
+        [Authorize(Roles = "Doctor")]
         public IActionResult DoctorList()
         {
             var doctors = from d in _context.Doctors select d;
@@ -195,19 +152,9 @@ namespace zorgapp.Controllers{
         public ActionResult Profile()
         {
             //Gets the username of the logged in user and sends it to the view
-			var username = User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
-			ViewBag.username = username;
-			var user = _context.Doctors.FirstOrDefault(u => u.UserName == username);
-			string email = user.Email.ToString();
-			ViewBag.email = email;
+            ViewBag.username = User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
 
-			return View();
+            return View();
         }
-		
-		public ActionResult Logout()
-		{
-			HttpContext.SignOutAsync();
-			return RedirectToAction("Index", "Home");
-		}
-	}
+    }
 }
