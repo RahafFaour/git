@@ -65,8 +65,8 @@ namespace zorgapp.Controllers{
             "Password=SAAD;Database=zorg;");
             
             NpgsqlCommand command = new NpgsqlCommand("UPDATE public.\"Doctors\" SET \"UserName\" = '" + username + "' WHERE \"DoctorId\" = '" + DoctorId + "'", conn);
-            command.Parameters.Add(new NpgsqlParameter("UserName", NpgsqlTypes.NpgsqlDbType.Text));
-            command.Parameters[0].Value = username;
+            // command.Parameters.Add(new NpgsqlParameter("UserName", NpgsqlTypes.NpgsqlDbType.Text));
+            // command.Parameters[0].Value = username;
             conn.Open();
             command.ExecuteNonQuery();
             conn.Close();
