@@ -63,19 +63,22 @@ namespace zorgapp.Controllers{
 		public IActionResult UpdateAccount(string firstname, string lastname, string email, int phonenumber, string specialism, string username, string password) {
            NpgsqlConnection conn = new NpgsqlConnection("Server=localhost;User ID=postgres;" + 
             "Password=SAAD;Database=zorg;");
+            
+            NpgsqlCommand command = new NpgsqlCommand("UPDATE zorg.Doctors SET UserName = '" + username + "' WHERE DoctorId = '" + DoctorId + "'", conn);
             conn.Open();
-            NpgsqlCommand cmd = new NpgsqlCommand("update Doctors set \"UserName\" = :username, where \"DoctorId\" = '" + DoctorId + " ' ;", conn);
+            command.ExecuteNonQuery();
+            conn.Close();
+            // NpgsqlCommand cmd = new NpgsqlCommand("update Doctors set \"UserName\" = :username, where \"DoctorId\" = '" + DoctorId + " ' ;", conn);
 
             // NpgsqlCommand cmd = new NpgsqlCommand("update info set \"UserName\" = :username,  \"Password\" = :password,  \"Email\" = :email, where \"DoctorId\" = id'" + "' ;", conn);
 
-            cmd.Parameters.Add(new NpgsqlParameter("UserName", NpgsqlTypes.NpgsqlDbType.Text));
+            // command.Parameters.Add(new NpgsqlParameter("UserName", NpgsqlTypes.NpgsqlDbType.Text));
             // cmd.Parameters.Add(new NpgsqlParameter("Password", NpgsqlTypes.NpgsqlDbType.Text));
             // cmd.Parameters.Add(new NpgsqlParameter("Email", NpgsqlTypes.NpgsqlDbType.Text));
-             cmd.Parameters[0].Value = username;
+            //  command.Parameters[0].Value = username;
             // cmd.Parameters[1].Value = password;
             // cmd.Parameters[2].Value = email;
-            cmd.ExecuteNonQuery();
-            conn.Close();
+
             		// // _context.Doctors.Update(doctor);
 					// _context.SaveChanges();
 					// return RedirectToAction("UpdateDoctorAccount", "Doctor");
