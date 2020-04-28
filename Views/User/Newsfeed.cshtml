@@ -1,0 +1,377 @@
+﻿<!-- model IEnumerable<Newspost> -->
+@model dynamic
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Newsfeed</title>
+    <style>
+        /* http://meyerweb.com/eric/tools/css/reset/
+        v2.0 | 20110126
+        License: none (public domain)
+        */
+
+        html, body, div, span, applet, object, iframe,
+        h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+        a, abbr, acronym, address, big, cite, code,
+        del, dfn, em, img, ins, kbd, q, s, samp,
+        small, strike, strong, sub, sup, tt, var,
+        b, u, i, center,
+        dl, dt, dd, ol, ul, li,
+        fieldset, form, label, legend,
+        table, caption, tbody, tfoot, thead, tr, th, td,
+        article, aside, canvas, details, embed,
+        figure, figcaption, footer, header, hgroup,
+        menu, nav, output, ruby, section, summary,
+        time, mark, audio, video {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            font-size: 100%;
+            font: inherit;
+            vertical-align: baseline;
+        }
+        /* HTML5 display-role reset for older browsers */
+        article, aside, details, figcaption, figure,
+        footer, header, hgroup, menu, nav, section {
+            display: block;
+        }
+
+        body {
+            line-height: 1;
+        }
+
+        ol, ul {
+            list-style: none;
+        }
+
+        blockquote, q {
+            quotes: none;
+        }
+
+            blockquote:before, blockquote:after, q:before, q:after {
+                content: '';
+                content: none;
+            }
+
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+        /*------------------------------------------------------------------------------*/
+
+        body {
+            font-family: 'Trebuchet MS', sans-serif;
+            background-color: #ffffff;
+        }
+
+        /* Colored bar on top of the page */
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #3bb546;
+            color: #ffffff;
+            font-size: 34px;
+            width: 100%;
+            text-align: right;
+            height: 74px;
+        }
+
+            .topbar h1 {
+                color: #ffffff;
+                font-size: 34px;
+                padding-top: 20px;
+                padding-bottom: 20px;
+                width: 55%;
+                float: left;
+            }
+
+        /* Account icon*/
+        #acc-icon {
+            padding: 7px 10px;
+            float: right;
+            width: 60px;
+        }
+
+        /* Sidemenu button */
+        .navbtn {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 1%;
+            padding-left: 25px;
+            padding-bottom: 20px;
+            padding-top: 20px;
+            background-color: #3bb546;
+            color: #ffffff;
+            font-size: 34px;
+            cursor: pointer;
+        }
+
+        /* Sidemenu overlay */
+        .overlay {
+            margin-top: 73px;
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            background-color: #3bb546;
+            overflow-x: hidden;
+            transition: 0.5s;
+        }
+
+        /* Sidemenu content */
+        .overlay-content {
+            position: relative;
+            top: 25%;
+            width: 100%;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .overlay a, p {
+            padding: 8px;
+            text-decoration: none;
+            font-size: 30px;
+            color: #ffffff;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .logout {
+            position: absolute;
+            bottom: 10%;
+            padding: 8px;
+            width: 100%;
+        }
+
+            .logout a {
+                text-align: center;
+                text-decoration: none;
+                font-size: 24px;
+                color: #ffffff;
+                display: block;
+                transition: 0.3s;
+            }
+
+                .overlay a:hover, .overlay a:focus, .logout a:hover, .logout a:focus {
+                    color: #9ee0a4;
+                }
+
+        /* Actual content of the newsfeed */
+        .newsfeed-content {
+            width: 100%;
+            overflow: hidden;
+            padding-top: 100px;
+            padding-bottom: 50px;
+        }
+
+        /* Categories list */
+        .categories {
+            position: fixed;
+            float: left;
+            width: 200px;
+            height: 550px;
+            padding-top: 80px;
+            padding-left: 50px;
+            border-right: 2px solid #3bb546;
+        }
+
+            .categories a {
+                color: #000000;
+                font-size: 24px;
+                text-decoration: none;
+                display: block;
+                padding-bottom: 15px;
+                width: 105px;
+            }
+
+                .categories a:hover {
+                    color: #9ee0a4;
+                }
+
+        /* Articles list */
+        .articles-list {
+            padding-top: 40px;
+            margin-left: 350px;
+        }
+
+        /* Single article */
+        .article {
+            width: 90%;
+            overflow: hidden;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #3bb546;
+        }
+
+        /* Article content consists of title (h1), author + date (h3) and 'keep reading' button */
+        .article-content {
+            float: left;
+        }
+
+            .article-content h1 {
+                font-size: 28px;
+                padding-bottom: 15px;
+                padding-top: 40px;
+            }
+
+            .article-content h3 {
+                font-size: 20px;
+                padding-bottom: 10px;
+            }
+
+            .article-content p {
+                color: #000000;
+                font-size: 18px;
+                padding-bottom: 10px;
+            }
+
+        /* Form to add an article */
+        .add-article {
+            width: 90%;
+            font-size: 18px;
+            padding-bottom: 20px;
+        }
+
+        input[type=text], select, textarea {
+            font-family: 'Trebuchet MS', sans-serif;
+            font-size: 16px;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-top: 6px;
+            margin-bottom: 16px;
+            resize: vertical;
+        }
+
+        input[type=submit] {
+            font-family: 'Trebuchet MS', sans-serif;
+            background-color: #3bb546;
+            color: white;
+            font-size: 18px;
+            border-radius: 25px;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+        }
+
+            input[type=submit]:hover {
+                background-color: #9ee0a4;
+            }
+    </style>
+    <script>
+        /*
+            nav() is triggered by the menubutton (class navbtn)
+            The function opens and closes the sidemenu by changing the width of the overlay
+            It first determines whether the sidemenu is open (20%) or closed (0%)
+            If the sidemenu is closed, it opens it up and the other way around
+        */
+        function nav() {
+            if (document.getElementById("nav").style.width == "0%") {
+                document.getElementById("nav").style.width = "20%";
+            }
+            else {
+                document.getElementById("nav").style.width = "0%";
+            }
+        }
+
+        /*
+            The functions hover and unhover change the account picture when the mouse is hovering on it
+            The difference between the two picture is the background color, so hovering makes it look like
+            the button is 'selected'
+        */
+        function hover(element) {
+            element.setAttribute('src', '@Url.Content("~/Content/account_hover2.png")');
+        }
+        function unhover(element) {
+            element.setAttribute('src', '@Url.Content("~/Content/account.png")');
+        }
+    </script>
+</head>
+<body>
+    <!-- Colored bar at the top of the page -->
+    <div class="topbar">
+
+        <!-- The button that opens the sidemenu -->
+        <span class="navbtn" onclick="nav()">&#9776; </span>
+
+        <!-- Page title -->
+        <h1>Newsfeed</h1>
+
+        <!-- Account information button -->
+        <a href="#"><img id="acc-icon" src="@Url.Content("~/Content/account.png")" onmouseover="hover(this);" onmouseout="unhover(this);" /></a>
+    </div>
+
+    <!-- Sidemenu overlay -->
+    <div id="nav" class="overlay">
+        <div class="overlay-content">
+            <p style="color: #9ee0a4;">Newsfeed</p>
+            <br>
+            <a onclick="nav()" href="#forums">Forums</a>
+            <br>
+            <a onclick="nav()" href="#chat">Chat</a>
+        </div>
+        <div class="logout"><a onclick="nav()" href="#logout">Log uit</a></div>
+    </div>
+
+    <!-- All the actual content of the page -->
+    <div class="newsfeed-content">
+
+        <!-- Newsfeed categories -->
+        <div class="categories">
+            <a href="#">Algemeen</a>
+    
+                @foreach (var group in Model.Group)
+                {
+                    <a href="#">@group.Name</a>
+                }
+            
+        </div>
+
+        <div class="articles-list">
+            <!-- The form to add a newspost links to a function in the UserController called AddPost. -->
+            <form action="AddPost" method="post" class="add-article">
+                <label for="title">Titel</label>
+                <input type="text" id="title" name="title" placeholder="Titel nieuwsbericht">
+
+                <label for="postid">PostId</label>
+                <input type="text" id="postid" name="postid" placeholder="PostId" />
+
+                <label for="category">Categorie</label>
+                <select id="group" name="group">
+                    <option id="general" name="general">Algemeen</option>
+                    @foreach (var group in Model.Group)
+                    {
+                    <option id="@group.Name" name="@group.Name">@group.Name</option>
+                    }
+                </select>
+
+                <label for="description">Beschrijving</label>
+                <textarea id="description" name="description" value="description" placeholder="Beschrijving nieuwsbericht" style="height:200px"></textarea>
+
+                <input type="submit" value="Voeg toe">
+            </form>
+
+            <!-- Single post attribute; Here all the posts from GetPosts() are put on the page. -->
+           
+                @foreach (var post in Model.Post)
+                {
+                    <div class="article">
+                        <div class="article-content">
+                            <h1>@post.Title</h1>
+                            <h3>@post.FirstName @post.LastName, @post.DateAdded</h3>
+                            <p>@post.Description</p>
+                        </div>
+                    </div>
+                }
+            
+
+        </div>
+    </div>
+</body>
+</html>
